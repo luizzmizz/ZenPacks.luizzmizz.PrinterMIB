@@ -1,0 +1,51 @@
+from xml.dom.minidom import parse
+import urllib
+from Products.DataCollector.plugins.CollectorPlugin import PythonPlugin
+from Products.DataCollector.plugins.DataMaps import ObjectMap
+
+class CiscoIPPhoneInterfaceMap(PythonPlugin):
+    maptype = "InterfaceMap" 
+    modname = "Products.ZenModel.IpInterface"
+    relname = "interfaces"
+    compname="os"
+
+    def collect(self, device, log):
+        names = ['ipAddress','deviceId']
+	values = []
+        values.append(self.getCiscoIPPhoneInterface(device.id,names,log,1))
+        values.append(self.getCiscoIPPhoneInterface(device.id,names,log,3))
+        return values 
+
+    def process(self, device, results, log):
+        log.info('Collecting Cisco interface info for device %s' % device.id)
+	rm = self.relMap()
+        log.info('Results: %s'%results)
+        i=0
+        if results:
+          for values in results:
+             log.error("DEBUGACO: values=%s"%values)
+	     om = self.objectMap({})
+             om.id="eth%s"%i
+             om.interfaceName=om.id
+	     om.setIpAddresses=[ str(values[0]) ]
+	     rm.append(om)
+	     i+=1
+        log.debug("MAPS: %s"%rm)
+        return rm
+
+    def getCiscoIPPhoneInterface(self,deviceIP,valueList,log,inumber):
+      ret=[]
+      try:
+        dom=parse(urllib.urlopen('http://%s/PortInformationX?%s'%(deviceIP,inumber)))
+      except Exception as e:
+        log.error("Parse Cisco Interface InformationX: %s, port %s"%(e, inumber))
+        return 0 
+      for value in valueList:
+        for node in dom.getElementsByTagName(value):
+          try: 
+            ret.append(node.childNodes[0].nodeValue)
+          except Exception as e:
+            ret.append("")
+            log.error("Error retrieveng XML value %s: %s"%(value,e))
+      return ret 
+

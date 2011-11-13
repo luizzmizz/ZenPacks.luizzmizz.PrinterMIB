@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<objects>
+<!-- ('', 'zport', 'dmd', 'Devices', 'Printer') -->
+<object id='/zport/dmd/Devices/Printer' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+<property visible="True" type="lines" id="zCollectorPlugins" >
+['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'zenoss.snmp.InterfaceMap', 'zenoss.snmp.RouteMap', 'luizzmizz.snmp.PrinterTonerMap']
+</property>
+<property visible="True" type="boolean" id="zHPExpansionCardMapIgnorePci" >
+True
+</property>
+<property visible="True" type="string" id="zPythonClass" >
+ZenPacks.luizzmizz.PrinterMIB.PrinterDevice
+</property>
+<object id='RICOH' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+</object>
+<object id='HP' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+</object>
+<object id='Canon' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+</object>
+</object>
+</objects>
